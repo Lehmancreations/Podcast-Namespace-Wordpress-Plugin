@@ -1,6 +1,7 @@
 # Podcast-Namespace-Wordpress-Plugin
 A plugin to add the podcast namespace to wordpress while using powerpress
 
+To set the channel level item information there is a settings page under Settings->Podcast Namespace
 
 # We currently support the following tags:
 ## Channel Tags
