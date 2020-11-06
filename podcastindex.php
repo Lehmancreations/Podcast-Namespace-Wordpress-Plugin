@@ -4,7 +4,7 @@
 Plugin Name: Podcast Namespace
 Plugin URI: https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin
 Description: A plugin to add the podcasting 2.0 namespace to your Powerpress feeds
-Version: 1.0.1
+Version: 1.0.2
 Author: Lehmancreations
 Author URI: https://lehmancreations.com
 Requires at least: 3.6
@@ -41,12 +41,8 @@ class PodcastNamespace {
 
 		<div class="wrap">
 			<h2>Podcast Namespace</h2>
-			<p>Set these options for the podcast namespace at the channel level</p>
-			<p>
-			To use the item level namespace place the following each in a custom field on the post:<br>
-			transcript and then a URL to the json encoded transcript file, you can have more than one of these but currently we only support json<br>
-			chapters and a URL to a json encoded chapter file
-			</p>
+			<p><b>Set these options for the podcast namespace at the channel level</b></p>
+			
 			<?php settings_errors(); ?>
 
 			<form method="post" action="options.php">
@@ -55,10 +51,24 @@ class PodcastNamespace {
 					do_settings_sections( 'podcast-namespace-admin' );
 					submit_button();
 				?>
+			
+
+			
 			</form>
 		</div>
 <div>
+				<p>
+				<b>To use the item level namespace place the following each in a custom field on the post:</b><br><br>
+			transcript is the name and value is a URL to the json encoded transcript file, you can have more than one of these but currently we only support json<br><br>
+			chapters is the name and value is a URL to a json encoded chapter file<br><br>
+			person is the name and value is the following each on its own line (name, host/guest, image url, other url to person)	<br><br>
+			soundbite is the name and value is the following each on its own line (title, start time, duration)
+				</p>
+</div>
+
+<div>
 	<p>
+		<hr>
 		Do you like this plugin? <a href="https://dudesanddadspodcast.com/paypal"> Consider a paypal donation to the podcast I host/produce </a>
 	</p>
 </div>
@@ -88,7 +98,7 @@ class PodcastNamespace {
 
 		add_settings_field(
 			'locked_owner_1', // id
-			'Locked Owner', // title
+			'Locked Owner Email', // title
 			array( $this, 'locked_owner_1_callback' ), // callback
 			'podcast-namespace-admin', // page
 			'podcast_namespace_setting_section' // section
@@ -110,6 +120,16 @@ class PodcastNamespace {
 			'podcast_namespace_setting_section' // section
 		);
 
+		add_settings_field(
+			'advertising_contact_email_3', // id
+			'Advertising Contact Email', // title
+			array( $this, 'advertising_contact_email_3_callback' ), // callback
+			'podcast-namespace-admin', // page
+			'podcast_namespace_setting_section' // section
+		);
+		
+		
+		
 		add_settings_field(
 			'funding_url_4', // id
 			'Funding Url', // title
@@ -144,6 +164,10 @@ class PodcastNamespace {
 		if ( isset( $input['abuse_contact_email_3'] ) ) {
 			$sanitary_values['abuse_contact_email_3'] = sanitize_text_field( $input['abuse_contact_email_3'] );
 		}
+		
+		if ( isset( $input['advertising_contact_email_3'] ) ) {
+			$sanitary_values['advertising_contact_email_3'] = sanitize_text_field( $input['advertising_contact_email_3'] );
+		}
 
 		if ( isset( $input['funding_url_4'] ) ) {
 			$sanitary_values['funding_url_4'] = sanitize_text_field( $input['funding_url_4'] );
@@ -162,9 +186,9 @@ class PodcastNamespace {
 
 	public function locked_0_callback() {
 		?> <select name="podcast_namespace_option_name[locked_0]" id="locked_0">
-			<?php $selected = (isset( $this->podcast_namespace_options['locked_0'] ) && $this->podcast_namespace_options['locked_0'] === 'locked-yes') ? 'selected' : '' ; ?>
+			<?php $selected = (isset( $this->podcast_namespace_options['locked_0'] ) && $this->podcast_namespace_options['locked_0'] === 'yes') ? 'selected' : '' ; ?>
 			<option value="yes" <?php echo $selected; ?>>Yes</option>
-			<?php $selected = (isset( $this->podcast_namespace_options['locked_0'] ) && $this->podcast_namespace_options['locked_0'] === 'locked-no') ? 'selected' : '' ; ?>
+			<?php $selected = (isset( $this->podcast_namespace_options['locked_0'] ) && $this->podcast_namespace_options['locked_0'] === 'no') ? 'selected' : '' ; ?>
 			<option value="no" <?php echo $selected; ?>>No</option>
 		</select> <?php
 	}
@@ -187,6 +211,13 @@ class PodcastNamespace {
 		printf(
 			'<input class="regular-text" type="text" name="podcast_namespace_option_name[abuse_contact_email_3]" id="abuse_contact_email_3" value="%s">',
 			isset( $this->podcast_namespace_options['abuse_contact_email_3'] ) ? esc_attr( $this->podcast_namespace_options['abuse_contact_email_3']) : ''
+		);
+	}
+	
+	public function advertising_contact_email_3_callback() {
+		printf(
+			'<input class="regular-text" type="text" name="podcast_namespace_option_name[advertising_contact_email_3]" id="adertising_contact_email_3" value="%s">',
+			isset( $this->podcast_namespace_options['advertising_contact_email_3'] ) ? esc_attr( $this->podcast_namespace_options['advertising_contact_email_3']) : ''
 		);
 	}
 
@@ -215,6 +246,7 @@ if ( is_admin() )
  * $locked_owner_1 = $podcast_namespace_options['locked_owner_1']; // Locked Owner
  * $feedback_contact_email_2 = $podcast_namespace_options['feedback_contact_email_2']; // Feedback Contact Email
  * $abuse_contact_email_3 = $podcast_namespace_options['abuse_contact_email_3']; // Abuse Contact Email
+ * $advertising_contact_email_3 = $podcast_namespace_options['advertising_contact_email_3']; // Advertising Contact Email
  * $funding_url_4 = $podcast_namespace_options['funding_url_4']; // Funding Url
  * $funding_description_0 = $podcast_namespace_options['funding_description_0']; // Funding Description
  */
@@ -250,10 +282,21 @@ function podastindex_rss2_head()
 	
 		echo "<!-- Podcast Index Tags Added by LehmanCreations -->".PHP_EOL;	
 	
-		echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL;
-		echo "\t".'<podcast:contact type="feedback" method="email">'. $podcast_namespace_options['feedback_contact_email_2'] .'</podcast:contact>'.PHP_EOL;
-		echo "\t".'<podcast:contact type="abuse" method="email">' . $podcast_namespace_options['abuse_contact_email_3'] . '</podcast:contact>'.PHP_EOL;
-		echo "\t".'<podcast:funding url="'. $podcast_namespace_options['funding_url_4'] . '">' .$podcast_namespace_options['funding_description_0']. '</podcast:funding>'.PHP_EOL;
+	    if (!empty ( $podcast_namespace_options['locked_owner_1'] )) {
+			echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL; }
+		
+		 if (!empty ( $podcast_namespace_options['feedback_contact_email_2'] )) {
+			echo "\t".'<podcast:contact type="feedback" method="email">'. $podcast_namespace_options['feedback_contact_email_2'] .'</podcast:contact>'.PHP_EOL; }
+	
+		if (!empty ( $podcast_namespace_options['abuse_contact_email_3'] )) {
+			echo "\t".'<podcast:contact type="abuse" method="email">' . $podcast_namespace_options['abuse_contact_email_3'] . '</podcast:contact>'.PHP_EOL; }
+		
+		if (!empty ( $podcast_namespace_options['advertising_contact_email_3'] )) {
+			echo "\t".'<podcast:contact type="advertising" method="email">' . $podcast_namespace_options['advertising_contact_email_3'] . '</podcast:contact>'.PHP_EOL; }
+		
+		if (!empty ( $podcast_namespace_options['funding_url_4'] )) {
+			echo "\t".'<podcast:funding url="'. $podcast_namespace_options['funding_url_4'] . '">' .$podcast_namespace_options['funding_description_0']. '</podcast:funding>'.PHP_EOL; }
+
 }
 
 add_action('rss2_head', 'podastindex_rss2_head');
@@ -264,6 +307,11 @@ add_action('rss2_head', 'podastindex_rss2_head');
 
 //Chapters
 function podcastindex_rss2_chapters( $content ) {
+
+	if( !powerpress_is_podcast_feed() )
+		return;
+
+
     global $post;
     $post_chapters = get_post_meta( $post->ID, 'chapters', TRUE );
     // add chapters only if the Custom Field is set
@@ -283,6 +331,10 @@ add_filter( 'rss2_item', 'podcastindex_rss2_chapters' );
 //Transcripts
 
 function podcastindex_rss2_transcript( $content ) {
+
+	if( !powerpress_is_podcast_feed() )
+		return;
+
     global $post;
     $post_transcripts = get_post_meta( $post->ID, 'transcript');
     // add chapters only if the Custom Field is set
@@ -304,4 +356,60 @@ function podcastindex_rss2_transcript( $content ) {
 add_filter( 'rss2_item', 'podcastindex_rss2_transcript' );
 
 
+
+//Person
+function podcastindex_rss2_person( $content ) {
+		if( !powerpress_is_podcast_feed() )
+		return;
+
+    global $post;
+    $post_people = get_post_meta( $post->ID, 'person');
+    // add people only if the Custom Field is set
+    if ( $post_people ) {
+		
+		foreach( $post_people as $post_person ) {
+			$pieces = explode("\r\n", $post_person);
+
+			
+		echo "\t".'<podcast:person role="'. $pieces[1] .'" img="' . $pieces[2] . '" href="' . $pieces[3] . '">' . $pieces[0] . '</podcast:person>'.PHP_EOL;
+		}
+		
+		
+ 
+    } else {
+        return;
+    }
+}
+
+
+add_filter( 'rss2_item', 'podcastindex_rss2_person' );
+
+// Soundbite
+
+//Person
+function podcastindex_rss2_soundbite( $content ) {
+		if( !powerpress_is_podcast_feed() )
+		return;
+
+    global $post;
+    $post_soundbites = get_post_meta( $post->ID, 'soundbite');
+    // add soundbite only if the Custom Field is set
+    if ( $post_soundbites ) {
+		
+		foreach( $post_soundbites as $post_soundbite ) {
+			$pieces = explode("\r\n", $post_soundbite);
+
+			
+		echo "\t".'<podcast:soundbite startTime="'. $pieces[1] .'" duration="' . $pieces[2] . '">' . $pieces[0] . '</podcast:soundbite>'.PHP_EOL;
+		}
+		
+		
+ 
+    } else {
+        return;
+    }
+}
+
+
+add_filter( 'rss2_item', 'podcastindex_rss2_soundbite' );
 ?>
