@@ -371,7 +371,7 @@ function podcastindex_rss2_person( $content ) {
 			$pieces = explode("\r\n", $post_person);
 
 			
-		echo "\t".'<podcast:person role="'. $pieces[1] .'" img="' . $pieces[2] . '" href="' . $pieces[3] . '">' . $pieces[0] . '</podcast:person>'.PHP_EOL;
+		echo "\t".'<podcast:person name="' .  $pieces[0] . '" role="'. $pieces[1] .'" img="' . $pieces[2] . '" href="' . $pieces[3] . '" />' .PHP_EOL;
 		}
 		
 		
@@ -386,7 +386,6 @@ add_filter( 'rss2_item', 'podcastindex_rss2_person' );
 
 // Soundbite
 
-//Person
 function podcastindex_rss2_soundbite( $content ) {
 		if( !powerpress_is_podcast_feed() )
 		return;
