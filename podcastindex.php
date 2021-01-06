@@ -4,7 +4,7 @@
 Plugin Name: Podcast Namespace
 Plugin URI: https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin
 Description: A plugin to add the podcasting 2.0 namespace to your Powerpress feeds
-Version: 1.0.2
+Version: 1.1
 Author: Lehmancreations
 Author URI: https://lehmancreations.com
 Requires at least: 3.6
@@ -280,7 +280,7 @@ function podastindex_rss2_head()
 	
 	
 	
-		echo "<!-- Podcast Index Tags Added by LehmanCreations -->".PHP_EOL;	
+		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.1 -->".PHP_EOL;	
 	
 	    if (!empty ( $podcast_namespace_options['locked_owner_1'] )) {
 			echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL; }
@@ -358,20 +358,170 @@ add_filter( 'rss2_item', 'podcastindex_rss2_transcript' );
 
 
 //Person
+//Person - Custom Meta box
+
+// START CUSTOM META BOX PERSON
+//Add metabox with dynamically added key-value (with more values possible) custom fields
+
+
+//TO CUSTOMIZE FIND AND REPLACE ANYTHING WITH psn in it
+
+// Caution, there're 2 set of options below
+//Variables used in the following functions should be mentioned in the 'global' statement of each of them appropriately
+//=======Options 1=======
+$psn_post_type = 'post';
+$psn_metabox_label = 'Person';
+$psn_cf_name = 'person';
+
+// Add actions, initialise functions
+add_action( 'add_meta_boxes', 'psn_dynamic_add_custom_box' );
+add_action( 'save_post', 'psn_dynamic_save_postdata' );
+
+//Function to add a meta box 
+function psn_dynamic_add_custom_box() {
+	global $psn_post_type, $psn_metabox_label;
+
+	add_meta_box('psn_dynamic_sectionid', $psn_metabox_label, 'psn_dynamic_inner_custom_box', $psn_post_type);
+}
+
+//Function that defines metabox contents
+function psn_dynamic_inner_custom_box() {
+
+	//=======Options 2=======
+	$psn_label_addnew = 'Add Person';
+	$psn_label_remove = 'Remove person';
+
+	$psn_key_name = 'name';
+	$psn_value_name = 'role';
+	$psn_value2_name = 'img';
+	$psn_value3_name = 'url';
+
+	
+	$psn_key_label = 'Name';
+	$psn_value_label = 'Role (host/guest)';
+	$psn_value2_label = 'Image URL';
+	$psn_value3_label = 'URL';
+
+
+	global $post;
+	global $psn_cf_name;
+
+	// Use nonce for verification
+	wp_nonce_field( plugin_basename( __FILE__ ), 'psn_dynamicMeta_noncename' );
+
+	//OPTIONAL - if using a date field
+	//Load admin scripts & styles for JS datepicker via the class from Meta Box plugin. This requires Meta Box plugin by Rilwis installed http://x.co/1YgqA
+	// $loadJqUIfromMetaboxPlugin = new RWMB_Date_Field();
+	// $loadJqUIfromMetaboxPlugin->admin_enqueue_scripts();
+
+	?>
+	<div id="psn_dynamic_inner_custom_box">
+	<?php
+	$psn_items = get_post_meta($post->ID,$psn_cf_name,true);
+	$c = 0;
+	if ( is_array($psn_items) && count( $psn_items ) > 0 ) {
+		foreach( $psn_items as $psn_item ) {
+		
+		
+			if ( isset( $psn_item[$psn_key_name] ) || isset( $psn_item[$psn_value_name] ) ) {
+				printf( '<p class="psn_parent"><label for=""%6$s[%1$s][%4$s]">%8$s</label> <input type="text" name="%6$s[%1$s][%4$s]" id="%6$s[%1$s][%4$s]" value="%2$s"> <label for="%6$s[%1$s][%5$s]">%9$s</label> <input id="%6$s[%1$s][%5$s]" type="text" name="%6$s[%1$s][%5$s]" value="%3$s"><label for="%6$s[%1$s][%10$s]">%11$s</label> <input type="text" id="%6$s[%1$s][%10$s]" name="%6$s[%1$s][%10$s]" value="%12$s"><label for="%6$s[%1$s][%13$s]">%14$s</label> <input type="text" id="%6$s[%1$s][%13$s]" name="%6$s[%1$s][%13$s]" value="%15$s"> <a href="#" class="psn_remove">%7$s</a></p>', 
+			/*1*/   $c, 
+			/*2*/   $psn_item[$psn_key_name], 
+			/*3*/   $psn_item[$psn_value_name], 
+			/*4*/   $psn_key_name, 
+			/*5*/   $psn_value_name, 
+			/*6*/   $psn_cf_name, 
+			/*7*/   $psn_label_remove,
+			/*8*/   $psn_key_label,
+			/*9*/   $psn_value_label,
+			/*10*/   $psn_value2_name,
+			/*11*/   $psn_value2_label,
+			/*12*/   $psn_item[$psn_value2_name], 
+			/*13*/   $psn_value3_name,
+			/*14*/   $psn_value3_label,
+			/*15*/   $psn_item[$psn_value3_name]
+				);
+				$c = $c + 1;
+			}
+		}
+	}
+	?>
+	<span id="psn_here"></span>
+	<a href="#" class="psn_add button-secondary"><?php echo $psn_label_addnew; ?></a>
+	<style type="text/css">
+		.psn_parent {display: flex;}
+		.psn_parent > * {flex:1 1 auto;}
+		.psn_parent label {padding-right:5px; text-align: right;}
+		.psn_parent .psn_remove {padding-left: 5px;}
+	</style>
+	<script>
+		var $ =jQuery.noConflict();
+		$(document).ready(function() {
+			
+			//OPTIONAL
+			//Add datepicker to an input
+			//$('body').on('focus',".choosedate", function(){ //Allows to init datepicker on non existing yet elements
+			//	$(this).datepicker({ dateFormat: "dd.mm.yy" });
+			//});
+
+			var count = <?php echo $c; ?>;
+			$(".psn_add").on('click',function(e) {
+				e.preventDefault();
+				count = count + 1;
+				$('#psn_here').append('<p class="psn_parent"><label for="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_key_name; ?>]"><?php echo $psn_key_label; ?></label> <input type="text" id="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_key_name; ?>]" name="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_key_name; ?>]" value="">  <label for="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_value_name; ?>]"><?php echo $psn_value_label; ?></label> <input type="text" name="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_value_name; ?>]" id="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_value_name; ?>]" value=""><label for="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_value2_name; ?>]"><?php echo $psn_value2_label; ?></label> <input type="text" name="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_value2_name; ?>]" id="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_value2_name; ?>]" value=""><label for="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_value3_name; ?>]"><?php echo $psn_value3_label; ?></label> <input type="text" name="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_value3_name; ?>]" id="<?php echo $psn_cf_name; ?>['+count+'][<?php echo $psn_value3_name; ?>]" value=""><a href="#" class="psn_remove"><?php echo $psn_label_remove; ?></a></p>');
+				return false;
+			});
+			$("#psn_dynamic_inner_custom_box").on('click', '.psn_remove', function(e) {
+				e.preventDefault();
+				$(this).parent().remove();
+			});
+		});
+		</script>
+	</div><?php
+}
+
+/* When the post is saved, saves our custom data */
+function psn_dynamic_save_postdata( $post_id ) {
+global $psn_cf_name;
+
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
+		return;
+	if ( !isset( $_POST['psn_dynamicMeta_noncename'] ) )
+		return;
+	if ( !wp_verify_nonce( $_POST['psn_dynamicMeta_noncename'], plugin_basename( __FILE__ ) ) )
+		return;
+	
+	$data2post = $_POST[$psn_cf_name];
+	
+	if (is_null($data2post)) {
+		$psn_items = get_post_meta($post->ID,$psn_cf_name,true);
+		delete_post_meta($post_id,$psn_cf_name, $psn_items);
+	} else {
+
+	update_post_meta($post_id,$psn_cf_name,$data2post);
+	}
+}	
+
+
+// END CUSTOM META BOX
+
+
+
+//Person RSS feed
 function podcastindex_rss2_person( $content ) {
 		if( !powerpress_is_podcast_feed() )
 		return;
 
     global $post;
-    $post_people = get_post_meta( $post->ID, 'person');
-    // add people only if the Custom Field is set
-    if ( $post_people ) {
+    $post_person = get_post_meta($post->ID, 'person',true); // get the value 
+
+    // add person only if the Custom Field is set
+    if ( $post_person ) {
 		
-		foreach( $post_people as $post_person ) {
-			$pieces = explode("\r\n", $post_person);
+		foreach( $post_person as $k => $v) {
 
 			
-		echo "\t".'<podcast:person name="' .  $pieces[0] . '" role="'. $pieces[1] .'" img="' . $pieces[2] . '" href="' . $pieces[3] . '" />' .PHP_EOL;
+		echo "\t".'<podcast:person role="'. $v['role'] .'" img="' . $v['img'] . '" href="' . $v['url'] . '">' . $v['name'] .'</podcast:person>' .PHP_EOL;
 		}
 		
 		
@@ -384,22 +534,160 @@ function podcastindex_rss2_person( $content ) {
 
 add_filter( 'rss2_item', 'podcastindex_rss2_person' );
 
-// Soundbite
+// Soundbite 
+
+//Soundbite - custom metabox
+
+//=======Options 1=======
+$sbite_post_type = 'post';
+$sbite_metabox_label = 'Soundbites';
+$sbite_cf_name = 'soundbites';
+
+// Add actions, initialise functions
+add_action( 'add_meta_boxes', 'sbite_dynamic_add_custom_box' );
+add_action( 'save_post', 'sbite_dynamic_save_postdata' );
+
+//Function to add a meta box 
+function sbite_dynamic_add_custom_box() {
+	global $sbite_post_type, $sbite_metabox_label;
+
+	add_meta_box('sbite_dynamic_sectionid', $sbite_metabox_label, 'sbite_dynamic_inner_custom_box', $sbite_post_type);
+}
+
+//Function that defines metabox contents
+function sbite_dynamic_inner_custom_box() {
+
+	//=======Options 2=======
+	$sbite_label_addnew = 'Add Soundbite';
+	$sbite_label_remove = 'Remove Soundbite';
+
+	$sbite_key_name = 'startTime';
+	$sbite_value_name = 'title';
+	$sbite_value2_name = 'duration';
+
+	
+	$sbite_key_label = 'Start Time (seconds)';
+	$sbite_value_label = 'Title';
+	$sbite_value2_label = 'Duration (seconds)';
+
+
+	global $post;
+	global $sbite_cf_name;
+
+	// Use nonce for verification
+	wp_nonce_field( plugin_basename( __FILE__ ), 'sbite_dynamicMeta_noncename' );
+
+	//OPTIONAL - if using a date field
+	//Load admin scripts & styles for JS datepicker via the class from Meta Box plugin. This requires Meta Box plugin by Rilwis installed http://x.co/1YgqA
+	// $loadJqUIfromMetaboxPlugin = new RWMB_Date_Field();
+	// $loadJqUIfromMetaboxPlugin->admin_enqueue_scripts();
+
+	?>
+	<div id="sbite_dynamic_inner_custom_box">
+	<?php
+	$sbite_items = get_post_meta($post->ID,$sbite_cf_name,true);
+	$c = 0;
+	if ( is_array($sbite_items) && count( $sbite_items ) > 0 ) {
+		foreach( $sbite_items as $sbite_item ) {
+		
+		
+			if ( isset( $sbite_item[$sbite_key_name] ) || isset( $sbite_item[$sbite_value_name] ) ) {
+				printf( '<p class="sbite_parent"><label for=""%6$s[%1$s][%5$s]">%9$s</label> <input type="text" name="%6$s[%1$s][%5$s]" id="%6$s[%1$s][%5$s]" value="%3$s"> <label for="%6$s[%1$s][%4$s]">%8$s</label> <input id="%6$s[%1$s][%4$s]" type="text" name="%6$s[%1$s][%4$s]" value="%2$s"><label for="%6$s[%1$s][%10$s]">%11$s</label> <input type="text" id="%6$s[%1$s][%10$s]" name="%6$s[%1$s][%10$s]" value="%12$s"> <a href="#" class="sbite_remove">%7$s</a></p>', 
+			/*1*/   $c, 
+			/*2*/   $sbite_item[$sbite_key_name], 
+			/*3*/   $sbite_item[$sbite_value_name], 
+			/*4*/   $sbite_key_name, 
+			/*5*/   $sbite_value_name, 
+			/*6*/   $sbite_cf_name, 
+			/*7*/   $sbite_label_remove,
+			/*8*/   $sbite_key_label,
+			/*9*/   $sbite_value_label,
+			/*10*/   $sbite_value2_name,
+			/*11*/   $sbite_value2_label,
+			/*12*/   $sbite_item[$sbite_value2_name]  
+				);
+				$c = $c + 1;
+			}
+		}
+	}
+	?>
+	<span id="sbite_here"></span>
+	<a href="#" class="sbite_add button-secondary"><?php echo $sbite_label_addnew; ?></a>
+	<style type="text/css">
+		.sbite_parent {display: flex;}
+		.sbite_parent > * {flex:1 1 auto;}
+		.sbite_parent label {padding-right:5px; text-align: right;}
+		.sbite_parent .sbite_remove {padding-left: 5px;}
+	</style>
+	<script>
+		var $ =jQuery.noConflict();
+		$(document).ready(function() {
+			
+			//OPTIONAL
+			//Add datepicker to an input
+			//$('body').on('focus',".choosedate", function(){ //Allows to init datepicker on non existing yet elements
+			//	$(this).datepicker({ dateFormat: "dd.mm.yy" });
+			//});
+
+			var count = <?php echo $c; ?>;
+			$(".sbite_add").on('click',function(e) {
+				e.preventDefault();
+				count = count + 1;
+				$('#sbite_here').append('<p class="sbite_parent"><label for="<?php echo $sbite_cf_name; ?>['+count+'][<?php echo $sbite_value_name; ?>]"><?php echo $sbite_value_label; ?></label> <input type="text" id="<?php echo $sbite_cf_name; ?>['+count+'][<?php echo $sbite_value_name; ?>]" name="<?php echo $sbite_cf_name; ?>['+count+'][<?php echo $sbite_value_name; ?>]" value="">  <label for="<?php echo $sbite_cf_name; ?>['+count+'][<?php echo $sbite_key_name; ?>]"><?php echo $sbite_key_label; ?></label> <input type="text" name="<?php echo $sbite_cf_name; ?>['+count+'][<?php echo $sbite_key_name; ?>]" id="<?php echo $sbite_cf_name; ?>['+count+'][<?php echo $sbite_key_name; ?>]" value=""><label for="<?php echo $sbite_cf_name; ?>['+count+'][<?php echo $sbite_value2_name; ?>]"><?php echo $sbite_value2_label; ?></label> <input type="text" name="<?php echo $sbite_cf_name; ?>['+count+'][<?php echo $sbite_value2_name; ?>]" id="<?php echo $sbite_cf_name; ?>['+count+'][<?php echo $sbite_value2_name; ?>]" value=""> <a href="#" class="sbite_remove"><?php echo $sbite_label_remove; ?></a></p>');
+				return false;
+			});
+			$("#sbite_dynamic_inner_custom_box").on('click', '.sbite_remove', function(e) {
+				e.preventDefault();
+				$(this).parent().remove();
+			});
+		});
+		</script>
+	</div><?php
+}
+
+/* When the post is saved, saves our custom data */
+function sbite_dynamic_save_postdata( $post_id ) {
+global $sbite_cf_name;
+
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
+		return;
+	if ( !isset( $_POST['sbite_dynamicMeta_noncename'] ) )
+		return;
+	if ( !wp_verify_nonce( $_POST['sbite_dynamicMeta_noncename'], plugin_basename( __FILE__ ) ) )
+		return;
+	
+	$data2post = $_POST[$sbite_cf_name];
+	
+	if (is_null($data2post)) {
+		$sbite_items = get_post_meta($post->ID,$sbite_cf_name,true);
+		delete_post_meta($post_id,$sbite_cf_name, $sbite_items);
+	} else {
+
+	update_post_meta($post_id,$sbite_cf_name,$data2post);
+	}
+}	
+
+
+// END CUSTOM META BOX
+
+
+
+//Soundbite - rss function
 
 function podcastindex_rss2_soundbite( $content ) {
 		if( !powerpress_is_podcast_feed() )
 		return;
 
     global $post;
-    $post_soundbites = get_post_meta( $post->ID, 'soundbite');
+    $post_soundbites = get_post_meta($post->ID, 'soundbites',true); // get the value 
+
     // add soundbite only if the Custom Field is set
     if ( $post_soundbites ) {
 		
-		foreach( $post_soundbites as $post_soundbite ) {
-			$pieces = explode("\r\n", $post_soundbite);
-
+		foreach( $post_soundbites as $k => $v) {
+		
 			
-		echo "\t".'<podcast:soundbite startTime="'. $pieces[1] .'" duration="' . $pieces[2] . '">' . $pieces[0] . '</podcast:soundbite>'.PHP_EOL;
+		echo "\t".'<podcast:soundbite startTime="'. $v['startTime'] .'" duration="' . $v['duration'] . '">' . $v['title'] . '</podcast:soundbite>'.PHP_EOL;
 		}
 		
 		
