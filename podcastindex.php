@@ -370,7 +370,7 @@ add_filter( 'rss2_item', 'podcastindex_rss2_transcript' );
 //Variables used in the following functions should be mentioned in the 'global' statement of each of them appropriately
 //=======Options 1=======
 $psn_post_type = 'post';
-$psn_metabox_label = 'Person';
+$psn_metabox_label = 'Podcast Person';
 $psn_cf_name = 'person';
 
 // Add actions, initialise functions
@@ -540,7 +540,7 @@ add_filter( 'rss2_item', 'podcastindex_rss2_person' );
 
 //=======Options 1=======
 $sbite_post_type = 'post';
-$sbite_metabox_label = 'Soundbites';
+$sbite_metabox_label = 'Podcast Soundbites';
 $sbite_cf_name = 'soundbites';
 
 // Add actions, initialise functions
