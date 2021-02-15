@@ -155,7 +155,7 @@ class PodcastNamespace {
 		
 		add_settings_field(
 			'location_geo_description_0', // id
-			'Location Coordinates Description', // title
+			'Location Coordinates', // title
 			array( $this, 'location_geo_description_0_callback' ), // callback
 			'podcast-namespace-admin', // page
 			'podcast_namespace_setting_section' // section
@@ -163,7 +163,7 @@ class PodcastNamespace {
 		
 		add_settings_field(
 			'location_osm_description_0', // id
-			'Location OSMID Description', // title
+			'Location OSMID', // title
 			array( $this, 'location_osm_description_0_callback' ), // callback
 			'podcast-namespace-admin', // page
 			'podcast_namespace_setting_section' // section

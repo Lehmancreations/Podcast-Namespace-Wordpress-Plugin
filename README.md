@@ -10,12 +10,16 @@ To install please click [the latest release](https://github.com/Lehmancreations/
 * Locked
 * Funding
 * Contact (Currently only Feedback and Abuse)
+* Location
 
 ## Item Tags
 * Transcript (only json format, to use set a custom field on your post of "transcript" and a value of the url)
 * Chapters (only json format, to use set a custom field on your post of "chapters" and a value of the url)
 * Person (use the custom form in the post to set the people)
 * Soundbite (use the custom form in the post to set the soundbites)
+* Location
+* Season
+* Episode
 
 If you get value from this plugin and want to toss a few dollars my way you can support the podcast I produce and Host, via paypal
 [Support me](https://DudesAndDadsPodcast.com/paypal "Dudes And Dads Podcast Paypal")
