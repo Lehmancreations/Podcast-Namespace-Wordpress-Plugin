@@ -1,6 +1,11 @@
 # Podcast Namespace Wordpress Plugin
 A plugin to add the podcast namespace to wordpress while using powerpress
 
+# March 16th Emergency Update. 
+Please update to version 1.3. Since Blubrry Updated Powerpress to include some of the namespace tags natively. They define the namespace and so did we. This was causing problems.
+I have dropped from defining the namespace so they will work together. If you are on the latest powerpress please update to this version. I plan on keeping the all the tags in this plug-in
+because if you were using them and I take them out it will break old episodes that use the tags I have defined.
+
 To set the channel level item information there is a settings page under Settings->Podcast Namespace
 
 To install please click [the latest release](https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin/releases/latest) and download the zipped file named "Podcast-Namespace-Wordpress-Plugin.zip". Log into wordpress and click plugins and then add and upload to your wordpress installation. This plugin will not get automatically updated so you will want to watch this repo for updates. 
