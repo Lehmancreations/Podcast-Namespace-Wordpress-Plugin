@@ -330,7 +330,7 @@ class PodcastNamespace {
 			isset( $this->podcast_namespace_options['podcast_guid_0'] ) ? esc_attr( $this->podcast_namespace_options['podcast_guid_0']) : ''
 		);
 		?> <input type="checkbox" id="generate_UUID" name="generate_UUID">
-<label for="generate_UUID"> Generate UUID (Check this, and put your feed url in minus the https:// and the trailing slash)</label><br> <?php
+<label for="generate_UUID"> Generate UUID (Check this, and put your feed url in minus the https:// and the trailing slash)</label><br><br> <b>A guid is generated from the RSS feed url, with the protocol scheme and trailing slashes stripped off. A podcast gets assigned a podcast:guid once in it's lifetime using it's current feed url (at the time of assignment) as the seed value. That GUID is then meant to follow the podcast from then on, for the duration of it's life, even if the feed url changes. See <a href="https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#guid" target="pc">The Podcast Namespace documentation</a> for more information.</b><?php
 	}
 	
 	
