@@ -4,7 +4,7 @@
 Plugin Name: Podcast Namespace
 Plugin URI: https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin
 Description: A plugin to add the podcasting 2.0 namespace to your Powerpress feeds
-Version: 1.3
+Version: 1.4
 Author: Lehmancreations
 Author URI: https://lehmancreations.com
 Requires at least: 3.6
@@ -155,7 +155,7 @@ class PodcastNamespace {
 		
 		add_settings_field(
 			'location_geo_description_0', // id
-			'Location Coordinates', // title
+			'Location Coordinates Description', // title
 			array( $this, 'location_geo_description_0_callback' ), // callback
 			'podcast-namespace-admin', // page
 			'podcast_namespace_setting_section' // section
@@ -163,11 +163,20 @@ class PodcastNamespace {
 		
 		add_settings_field(
 			'location_osm_description_0', // id
-			'Location OSMID', // title
+			'Location OSMID Description', // title
 			array( $this, 'location_osm_description_0_callback' ), // callback
 			'podcast-namespace-admin', // page
 			'podcast_namespace_setting_section' // section
 		);
+		
+				add_settings_field(
+			'podcast_guid_0', // id
+			'Podcast GUID', // title
+			array( $this, 'podcast_guid_0_callback' ), // callback
+			'podcast-namespace-admin', // page
+			'podcast_namespace_setting_section' // section
+		);
+		
 	}
 
 	public function podcast_namespace_sanitize($input) {
@@ -210,9 +219,33 @@ class PodcastNamespace {
 
 		if ( isset( $input['location_osm_description_0'] ) ) {
 			$sanitary_values['location_osm_description_0'] = sanitize_text_field( $input['location_osm_description_0'] );
+		}	
+		
+		if ( isset( $input['podcast_guid_0'] ) ) {
 			
+			
+			if ( isset( $_POST['generate_UUID'] ) ) {
+				//Make the request to an API endpoint
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL,'https://www.uuidtools.com/api/generate/v5/namespace/ead4c236-bf58-58c6-a2c6-a6b28d128cb6/name/' . $input['podcast_guid_0']);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				// curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+				//Collect and show the results
+				$response = curl_exec ($ch);
+				curl_close ($ch);
+
+				$responseObj = json_decode($response);
+				
+				$sanitary_values['podcast_guid_0'] = sanitize_text_field( $responseObj[0] );
+			
+			} else {
+
+				$sanitary_values['podcast_guid_0'] = sanitize_text_field( $input['podcast_guid_0'] );
+			}
+		}	
 		return $sanitary_values;
-		}
+		
 		
 	}
 	public function podcast_namespace_section_info() {
@@ -291,6 +324,17 @@ class PodcastNamespace {
 		);
 	}
 
+	public function podcast_guid_0_callback() {
+		printf(
+			'<input class="regular-text" type="text" name="podcast_namespace_option_name[podcast_guid_0]" id="podcast_guid_0" value="%s">',
+			isset( $this->podcast_namespace_options['podcast_guid_0'] ) ? esc_attr( $this->podcast_namespace_options['podcast_guid_0']) : ''
+		);
+		?> <input type="checkbox" id="generate_UUID" name="generate_UUID">
+<label for="generate_UUID"> Generate UUID (Check this, and put your feed url in minus the https:// and the trailing slash)</label><br> <?php
+	}
+	
+	
+	
 }
 if ( is_admin() )
 	$podcast_namespace = new PodcastNamespace();
@@ -308,6 +352,8 @@ if ( is_admin() )
  * $location_description_0 = $podcast_namespace_options['location_description_0']; // Location Description
  * $location_geo_description_0 = $podcast_namespace_options['location_geo_description_0']; // Location Description Coordinates
  * $location_osm_description_0 = $podcast_namespace_options['location_osm_description_0']; // OSMID of the podcast
+ * $podcast_guid_0 = $podcast_namespace_options['podcast_guid_0']; // Podcast GUID
+ * 
  */
 
 
@@ -318,7 +364,7 @@ function podcastindex_rss2_ns()
 		return;
 
 	// Okay, lets add the namespace
-//	echo 'xmlns:podcast="https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md"'.PHP_EOL;
+	//echo 'xmlns:podcast="https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md"'.PHP_EOL;
 	
 }
 
@@ -339,7 +385,7 @@ function podastindex_rss2_head()
 	
 	
 	
-		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.3 -->".PHP_EOL;	
+		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.4 -->".PHP_EOL;	
 	
 	    if (!empty ( $podcast_namespace_options['locked_owner_1'] )) {
 			echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL; }
@@ -359,8 +405,13 @@ function podastindex_rss2_head()
 	   if (!empty ( $podcast_namespace_options['location_description_0'] )) { 
 	  		echo "\t".'<podcast:location geo="geo:' . $podcast_namespace_options['location_geo_description_0'] . '" osm="' . $podcast_namespace_options['location_osm_description_0'] . '">' .$podcast_namespace_options['location_description_0']. '</podcast:location>'.PHP_EOL; }
 
-}
 
+
+		if (!empty ( $podcast_namespace_options['podcast_guid_0'] )) { 
+	  		echo "\t".'<podcast:guid>' . $podcast_namespace_options['podcast_guid_0'] . '</podcast:guid>'.PHP_EOL; }
+
+
+}
 add_action('rss2_head', 'podastindex_rss2_head');
 
 
