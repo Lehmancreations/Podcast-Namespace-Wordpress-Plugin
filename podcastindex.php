@@ -4,7 +4,7 @@
 Plugin Name: Podcast Namespace
 Plugin URI: https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin
 Description: A plugin to add the podcasting 2.0 namespace to your Powerpress feeds
-Version: 1.4
+Version: 1.5
 Author: Lehmancreations
 Author URI: https://lehmancreations.com
 Requires at least: 3.6
@@ -177,6 +177,14 @@ class PodcastNamespace {
 			'podcast_namespace_setting_section' // section
 		);
 		
+				add_settings_field(
+			'podcast_value_0', // id
+			'Podcast Value Block', // title
+			array( $this, 'podcast_value_0_callback' ), // callback
+			'podcast-namespace-admin', // page
+			'podcast_namespace_setting_section' // section
+		);
+		
 	}
 
 	public function podcast_namespace_sanitize($input) {
@@ -243,6 +251,10 @@ class PodcastNamespace {
 
 				$sanitary_values['podcast_guid_0'] = sanitize_text_field( $input['podcast_guid_0'] );
 			}
+			
+			if ( isset( $input['podcast_value_0'] ) ) {
+			$sanitary_values['podcast_value_0'] = $input['podcast_value_0'];
+		}	
 		}	
 		return $sanitary_values;
 		
@@ -333,7 +345,13 @@ class PodcastNamespace {
 <label for="generate_UUID"> Generate UUID (Check this, and put your feed url in minus the https:// and the trailing slash)</label><br><br> <b>A guid is generated from the RSS feed url, with the protocol scheme and trailing slashes stripped off. A podcast gets assigned a podcast:guid once in it's lifetime using it's current feed url (at the time of assignment) as the seed value. That GUID is then meant to follow the podcast from then on, for the duration of it's life, even if the feed url changes. See <a href="https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#guid" target="pc">The Podcast Namespace documentation</a> for more information.</b><?php
 	}
 	
-	
+	public function podcast_value_0_callback() {
+		printf(
+			'<textarea rows="4" cols="35" name="podcast_namespace_option_name[podcast_value_0]" id="podcast_0">%s</textarea>',
+			isset( $this->podcast_namespace_options['podcast_value_0'] ) ? esc_attr( $this->podcast_namespace_options['podcast_value_0']) : ''
+		);
+		?> <br><b>Please input the tag you got from your lightning provider (i.e. LNpay.co or satoshis.stream) begining at"&#60;podcast:valueRecipient" tag. <br>NOTE: Please do not enter the "&#60;podcast:value type="lightning"" tag, we will put that in your feed. Also note inputing the wrong thing in here can wreck your feed. This is an advanced setting.</b> <?PHP
+	}	
 	
 }
 if ( is_admin() )
@@ -385,7 +403,7 @@ function podastindex_rss2_head()
 	
 	
 	
-		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.4 -->".PHP_EOL;	
+		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.5 -->".PHP_EOL;	
 	
 	    if (!empty ( $podcast_namespace_options['locked_owner_1'] )) {
 			echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL; }
@@ -409,7 +427,33 @@ function podastindex_rss2_head()
 
 		if (!empty ( $podcast_namespace_options['podcast_guid_0'] )) { 
 	  		echo "\t".'<podcast:guid>' . $podcast_namespace_options['podcast_guid_0'] . '</podcast:guid>'.PHP_EOL; }
+	
+	
 
+		if (!empty ( $podcast_namespace_options['podcast_value_0'] )) { 
+			
+		
+			echo "\t". '<podcast:value type="lightning" method="keysend" suggested="0.00000015000">' .PHP_EOL;
+	  		echo "\t". $podcast_namespace_options['podcast_value_0'] .PHP_EOL; 
+			
+			echo "\t". '<podcast:valueRecipient
+            name="LehmanCreations PodcastNamespace Plugin"
+            address="033868c219bdb51a33560d854d500fe7d3898a1ad9e05dd89d0007e11313588500"
+            type="node"
+            customKey="112111100"
+            customValue="wal_Yan4yx8pPj0WY"
+            split="1"
+			fee="true"
+        />' .PHP_EOL; 
+			  
+			
+			
+			echo "\t". '</podcast:value>' .PHP_EOL;
+		
+		
+		
+		}
+	
 
 }
 add_action('rss2_head', 'podastindex_rss2_head');
