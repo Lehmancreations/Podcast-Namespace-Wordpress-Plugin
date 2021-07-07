@@ -4,7 +4,7 @@
 Plugin Name: Podcast Namespace
 Plugin URI: https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin
 Description: A plugin to add the podcasting 2.0 namespace to your Powerpress feeds
-Version: 1.5.2
+Version: 1.5.3
 Author: Lehmancreations
 Author URI: https://lehmancreations.com
 Requires at least: 3.6
@@ -403,7 +403,7 @@ function podastindex_rss2_head()
 	
 	
 	
-		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.5.2 -->".PHP_EOL;	
+		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.5.3 -->".PHP_EOL;	
 	
 	    if (!empty ( $podcast_namespace_options['locked_owner_1'] )) {
 			echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL; }
@@ -436,15 +436,7 @@ function podastindex_rss2_head()
 			echo "\t". '<podcast:value type="lightning" method="keysend" suggested="0.00000015000">' .PHP_EOL;
 	  		echo "\t". $podcast_namespace_options['podcast_value_0'] .PHP_EOL; 
 			
-			echo "\t". '<podcast:valueRecipient
-            name="LehmanCreations PodcastNamespace Plugin"
-            address="033868c219bdb51a33560d854d500fe7d3898a1ad9e05dd89d0007e11313588500"
-            type="node"
-            customKey="112111100"
-            customValue="wal_Yan4yx8pPj0WY"
-            split="1"
-			fee="true"
-        />' .PHP_EOL; 
+			echo "\t". '<podcast:valueRecipient name="LehmanCreations PodcastNamespace Plugin" address="033868c219bdb51a33560d854d500fe7d3898a1ad9e05dd89d0007e11313588500" type="node" customKey="112111100" customValue="wal_Yan4yx8pPj0WY" split="1" fee="true" />' .PHP_EOL; 
 			  
 			
 			
