@@ -4,7 +4,7 @@
 Plugin Name: Podcast Namespace
 Plugin URI: https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin
 Description: A plugin to add the podcasting 2.0 namespace to your Powerpress feeds
-Version: 1.5.1
+Version: 1.5.2
 Author: Lehmancreations
 Author URI: https://lehmancreations.com
 Requires at least: 3.6
@@ -403,7 +403,7 @@ function podastindex_rss2_head()
 	
 	
 	
-		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.5.1 -->".PHP_EOL;	
+		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.5.2 -->".PHP_EOL;	
 	
 	    if (!empty ( $podcast_namespace_options['locked_owner_1'] )) {
 			echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL; }
