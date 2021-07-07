@@ -350,7 +350,7 @@ class PodcastNamespace {
 			'<textarea rows="4" cols="35" name="podcast_namespace_option_name[podcast_value_0]" id="podcast_0">%s</textarea>',
 			isset( $this->podcast_namespace_options['podcast_value_0'] ) ? esc_attr( $this->podcast_namespace_options['podcast_value_0']) : ''
 		);
-		?> <br><b>Please input the tag you got from your lightning provider (i.e. LNpay.co or satoshis.stream) begining at"&#60;podcast:valueRecipient" tag. <br>NOTE: Please do not enter the "&#60;podcast:value type="lightning"" tag, we will put that in your feed. Also note inputing the wrong thing in here can wreck your feed. This is an advanced setting.</b> <?PHP
+		?> <br><b>Please input the tag you got from your lightning provider (i.e. LNpay.co or satoshis.stream) begining at"&#60;podcast:valueRecipient" tag. <br>NOTE: Please do not enter the "&#60;podcast:value type="lightning"" tag or the "&#60;/podcast:value&gt;" tag, we will put that in your feed. Also note inputing the wrong thing in here can wreck your feed. This is an advanced setting.</b> <?PHP
 	}	
 	
 }
