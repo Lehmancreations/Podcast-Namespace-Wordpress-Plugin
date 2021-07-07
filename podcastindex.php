@@ -4,7 +4,7 @@
 Plugin Name: Podcast Namespace
 Plugin URI: https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin
 Description: A plugin to add the podcasting 2.0 namespace to your Powerpress feeds
-Version: 1.5
+Version: 1.5.1
 Author: Lehmancreations
 Author URI: https://lehmancreations.com
 Requires at least: 3.6
@@ -155,7 +155,7 @@ class PodcastNamespace {
 		
 		add_settings_field(
 			'location_geo_description_0', // id
-			'Location Coordinates Description', // title
+			'Location Coordinates', // title
 			array( $this, 'location_geo_description_0_callback' ), // callback
 			'podcast-namespace-admin', // page
 			'podcast_namespace_setting_section' // section
@@ -163,7 +163,7 @@ class PodcastNamespace {
 		
 		add_settings_field(
 			'location_osm_description_0', // id
-			'Location OSMID Description', // title
+			'Location OSMID', // title
 			array( $this, 'location_osm_description_0_callback' ), // callback
 			'podcast-namespace-admin', // page
 			'podcast_namespace_setting_section' // section
@@ -381,7 +381,7 @@ function podcastindex_rss2_ns()
 	if( !powerpress_is_podcast_feed() )
 		return;
 
-	// Okay, lets add the namespace
+	// Okay, lets add the namespace (commented out because powerpress already adds it)
 	//echo 'xmlns:podcast="https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md"'.PHP_EOL;
 	
 }
@@ -403,7 +403,7 @@ function podastindex_rss2_head()
 	
 	
 	
-		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.5 -->".PHP_EOL;	
+		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.5.1 -->".PHP_EOL;	
 	
 	    if (!empty ( $podcast_namespace_options['locked_owner_1'] )) {
 			echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL; }
