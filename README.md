@@ -18,6 +18,7 @@ To install please click [the latest release](https://github.com/Lehmancreations/
 * Contact (Currently only Feedback and Abuse)
 * Location
 * Podcast GUID
+* Value block
 
 ## Item Tags
 * Transcript (only json format, to use set a custom field on your post of "transcript" and a value of the url)
