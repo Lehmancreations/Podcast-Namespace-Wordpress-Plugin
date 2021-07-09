@@ -4,7 +4,7 @@
 Plugin Name: Podcast Namespace
 Plugin URI: https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin
 Description: A plugin to add the podcasting 2.0 namespace to your Powerpress feeds
-Version: 1.5.3
+Version: 1.5.4
 Author: Lehmancreations
 Author URI: https://lehmancreations.com
 Requires at least: 3.6
@@ -59,7 +59,7 @@ class PodcastNamespace {
 <div>
 				<p>
 				<b>To use the item level namespace place the following each in a custom field on the post:</b><br><br>
-			transcript is the name and value is a URL to the json encoded transcript file, you can have more than one of these but currently we only support json<br><br>
+			transcript is the name and value is a URL to the srt transcript file, you can have more than one of these but currently we only support srt<br><br>
 			chapters is the name and value is a URL to a json encoded chapter file<br><br>
 			person: use the custom person box on the post	<br><br>
 			soundbite: use the custom soundbite box on the post
@@ -490,7 +490,7 @@ function podcastindex_rss2_transcript( $content ) {
     if ( $post_transcripts ) {
 		
 		foreach( $post_transcripts as $post_transcript ) {
-		echo "\t".'<podcast:transcript url="'.$post_transcript .'" type="application/json"/>'.PHP_EOL;
+		echo "\t".'<podcast:transcript url="'.$post_transcript .'" type="text/srt" rel="captions"/>'.PHP_EOL;
 		}
 		
 		
