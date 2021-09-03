@@ -185,6 +185,13 @@ class PodcastNamespace {
 			'podcast_namespace_setting_section' // section
 		);
 		
+				add_settings_field(
+			'podcast_value_suggested_0', // id
+			'Podcast Value Suggested Ammount', // title
+			array( $this, 'podcast_value_suggested_0_callback' ), // callback
+			'podcast-namespace-admin', // page
+			'podcast_namespace_setting_section' // section
+		);
 	}
 
 	public function podcast_namespace_sanitize($input) {
@@ -251,11 +258,17 @@ class PodcastNamespace {
 
 				$sanitary_values['podcast_guid_0'] = sanitize_text_field( $input['podcast_guid_0'] );
 			}
-			
+		}
 			if ( isset( $input['podcast_value_0'] ) ) {
 			$sanitary_values['podcast_value_0'] = $input['podcast_value_0'];
 		}	
+			if ( isset( $input['podcast_value_suggested_0'] ) ) {
+				if ($input['podcast_value_suggested_0'] == '') {
+					$sanitary_values['podcast_value_suggested_0'] = '0.00000015000';
+				} else {
+			$sanitary_values['podcast_value_suggested_0'] = $input['podcast_value_suggested_0'];
 		}	
+			}
 		return $sanitary_values;
 		
 		
@@ -350,8 +363,16 @@ class PodcastNamespace {
 			'<textarea rows="4" cols="35" name="podcast_namespace_option_name[podcast_value_0]" id="podcast_0">%s</textarea>',
 			isset( $this->podcast_namespace_options['podcast_value_0'] ) ? esc_attr( $this->podcast_namespace_options['podcast_value_0']) : ''
 		);
-		?> <br><b>Please input the tag you got from your lightning provider (i.e. LNpay.co or satoshis.stream) begining at"&#60;podcast:valueRecipient" tag. <br>NOTE: Please do not enter the "&#60;podcast:value type="lightning"" tag or the "&#60;/podcast:value&gt;" tag, we will put that in your feed. Also note inputing the wrong thing in here can wreck your feed. This is an advanced setting.</b> <?PHP
+		?> <br><b>Please input the tag you got from your lightning provider (i.e. LNpay.co or satoshis.stream) begining at"&#60;podcast:valueRecipient" tag. <br>NOTE: Please do not enter the "&#60;podcast:value type="lightning"" tag or the "&#60;/podcast:value&gt;" tag, we will put that in your feed. Also note inputing the wrong thing in here can wreck your feed. This is an advanced setting. Also note that if you set your value block here we will add a 1% fee split for using our plugin</b> <?PHP
 	}	
+	
+		public function podcast_value_suggested_0_callback() {
+		printf(
+			'<input class="regular-text" type="text" name="podcast_namespace_option_name[podcast_value_suggested_0]" id="podcast_value_suggested_0" value="%s">',
+			isset( $this->podcast_namespace_options['podcast_value_suggested_0'] ) ? esc_attr( $this->podcast_namespace_options['podcast_value_suggested_0']) : ''
+		);
+		?> <br><b>if this field is left blank it will default to 0.00000015000</b><br><?PHP
+	}
 	
 }
 if ( is_admin() )
@@ -371,7 +392,7 @@ if ( is_admin() )
  * $location_geo_description_0 = $podcast_namespace_options['location_geo_description_0']; // Location Description Coordinates
  * $location_osm_description_0 = $podcast_namespace_options['location_osm_description_0']; // OSMID of the podcast
  * $podcast_guid_0 = $podcast_namespace_options['podcast_guid_0']; // Podcast GUID
- * 
+ * $podcast_namespace_options['podcast_guid_suggested_0'] //Suggested value
  */
 
 
@@ -403,7 +424,7 @@ function podastindex_rss2_head()
 	
 	
 	
-		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.5.3 -->".PHP_EOL;	
+		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.5.4 -->".PHP_EOL;	
 	
 	    if (!empty ( $podcast_namespace_options['locked_owner_1'] )) {
 			echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL; }
@@ -433,7 +454,7 @@ function podastindex_rss2_head()
 		if (!empty ( $podcast_namespace_options['podcast_value_0'] )) { 
 			
 		
-			echo "\t". '<podcast:value type="lightning" method="keysend" suggested="0.00000015000">' .PHP_EOL;
+			echo "\t". '<podcast:value type="lightning" method="keysend" suggested="' .$podcast_namespace_options['podcast_value_suggested_0'] .'">' .PHP_EOL;
 	  		echo "\t". $podcast_namespace_options['podcast_value_0'] .PHP_EOL; 
 			
 			echo "\t". '<podcast:valueRecipient name="LehmanCreations PodcastNamespace Plugin" address="033868c219bdb51a33560d854d500fe7d3898a1ad9e05dd89d0007e11313588500" type="node" customKey="112111100" customValue="wal_Yan4yx8pPj0WY" split="1" fee="true" />' .PHP_EOL; 
