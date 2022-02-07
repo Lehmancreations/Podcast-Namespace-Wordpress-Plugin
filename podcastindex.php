@@ -4,13 +4,11 @@
 Plugin Name: Podcast Namespace
 Plugin URI: https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin
 Description: A plugin to add the podcasting 2.0 namespace to your Powerpress feeds
-Version: 1.5.4
+Version: 1.6
 Author: Lehmancreations
 Author URI: https://lehmancreations.com
 Requires at least: 3.6
 
-
-*/
 
 
 /**
@@ -192,6 +190,15 @@ class PodcastNamespace {
 			'podcast-namespace-admin', // page
 			'podcast_namespace_setting_section' // section
 		);
+		
+		add_settings_field(
+			'medium_0', // id
+			'Medium', // title
+			array( $this, 'medium_0_callback' ), // callback
+			'podcast-namespace-admin', // page
+			'podcast_namespace_setting_section' // section
+		);
+
 	}
 
 	public function podcast_namespace_sanitize($input) {
@@ -269,6 +276,11 @@ class PodcastNamespace {
 			$sanitary_values['podcast_value_suggested_0'] = $input['podcast_value_suggested_0'];
 		}	
 			}
+		
+			if ( isset( $input['medium_0'] ) ) {
+			$sanitary_values['medium_0'] = $input['medium_0'];
+		}
+		
 		return $sanitary_values;
 		
 		
@@ -374,6 +386,25 @@ class PodcastNamespace {
 		?> <br><b>if this field is left blank it will default to 0.00000015000</b><br><?PHP
 	}
 	
+	public function medium_0_callback() {
+		?> <select name="podcast_namespace_option_name[medium_0]" id="medium_0">
+			<?php $selected = (isset( $this->podcast_namespace_options['medium_0'] ) && $this->podcast_namespace_options['medium_0'] === 'podcast') ? 'selected' : '' ; ?>
+			<option value="podcast" <?php echo $selected; ?>>podcast</option>
+			<?php $selected = (isset( $this->podcast_namespace_options['medium_0'] ) && $this->podcast_namespace_options['medium_0'] === 'music') ? 'selected' : '' ; ?>
+			<option value="music" <?php echo $selected; ?>>music</option>
+	<?php $selected = (isset( $this->podcast_namespace_options['medium_0'] ) && $this->podcast_namespace_options['medium_0'] === 'video') ? 'selected' : '' ; ?>
+			<option value="video" <?php echo $selected; ?>>video</option>
+	<?php $selected = (isset( $this->podcast_namespace_options['medium_0'] ) && $this->podcast_namespace_options['medium_0'] === 'film') ? 'selected' : '' ; ?>
+			<option value="film" <?php echo $selected; ?>>film</option>
+	<?php $selected = (isset( $this->podcast_namespace_options['medium_0'] ) && $this->podcast_namespace_options['medium_0'] === 'audiobook') ? 'selected' : '' ; ?>
+			<option value="audiobook" <?php echo $selected; ?>>audiobook</option>
+	<?php $selected = (isset( $this->podcast_namespace_options['medium_0'] ) && $this->podcast_namespace_options['medium_0'] === 'newsletter') ? 'selected' : '' ; ?>
+			<option value="newsletter" <?php echo $selected; ?>>newsletter</option>
+	<?php $selected = (isset( $this->podcast_namespace_options['medium_0'] ) && $this->podcast_namespace_options['medium_0'] === 'blog') ? 'selected' : '' ; ?>
+			<option value="blog" <?php echo $selected; ?>>blog</option>
+		</select> <?php
+	}
+	
 }
 if ( is_admin() )
 	$podcast_namespace = new PodcastNamespace();
@@ -393,6 +424,7 @@ if ( is_admin() )
  * $location_osm_description_0 = $podcast_namespace_options['location_osm_description_0']; // OSMID of the podcast
  * $podcast_guid_0 = $podcast_namespace_options['podcast_guid_0']; // Podcast GUID
  * $podcast_namespace_options['podcast_guid_suggested_0'] //Suggested value
+ * * $podcast_namespace_options['medium_0'] //Medium
  */
 
 
@@ -424,7 +456,7 @@ function podastindex_rss2_head()
 	
 	
 	
-		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.5.4 -->".PHP_EOL;	
+		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.6 -->".PHP_EOL;	
 	
 	    if (!empty ( $podcast_namespace_options['locked_owner_1'] )) {
 			echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL; }
@@ -466,7 +498,8 @@ function podastindex_rss2_head()
 		
 		
 		}
-	
+if (!empty ( $podcast_namespace_options['medium_0'] )) {
+			echo "\t".'<podcast:medium>' . $podcast_namespace_options['medium_0'] . '</podcast:medium>'.PHP_EOL; }	
 
 }
 add_action('rss2_head', 'podastindex_rss2_head');
