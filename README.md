@@ -27,7 +27,7 @@ To install please click [the latest release](https://github.com/Lehmancreations/
 * Location
 * Season
 * Episode
-* Live Item Tag
+* Live Item Tag (This tag has its own menu item under the tools menu in wordpress)
 
 If you get value from this plugin and want to toss a few dollars my way you can support the podcast I produce and Host, via paypal
 [Support me](https://DudesAndDadsPodcast.com/paypal "Dudes And Dads Podcast Paypal")
