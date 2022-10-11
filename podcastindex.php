@@ -4,7 +4,7 @@
 Plugin Name: Podcast Namespace
 Plugin URI: https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin
 Description: A plugin to add the podcasting 2.0 namespace to your Powerpress feeds
-Version: 1.7
+Version: 1.7.1
 Author: Lehmancreations
 Author URI: https://lehmancreations.com
 Requires at least: 3.6
@@ -456,7 +456,7 @@ function podastindex_rss2_head()
 	
 	
 	
-		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.7 -->".PHP_EOL;	
+		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.7.1 -->".PHP_EOL;	
 	
 	    if (!empty ( $podcast_namespace_options['locked_owner_1'] )) {
 			echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL; }
@@ -1231,7 +1231,7 @@ class pc20liveItemTag {
 
 		<div class="wrap">
 			<h2>Live Item Tag 🔥</h2>
-			<p>Add A live item to your feed<br>You will still need to send podpings when you go live. The podping will need the reason code of live in it.</p>
+			<p><b>Add A live item to your feed</b><br>You will still need to send podpings when you go live. The podping will need the reason code of live in it. You can go to <a href="https://sovereignfeeds.com/" target="sf">https://sovereignfeeds.com/</a> and search for your podcast, in the menu on the left choose podping</p>
 			<?php settings_errors(); ?>
 
 			<form method="post" action="options.php">
@@ -1422,8 +1422,8 @@ class pc20liveItemTag {
 		?> <select name="pc20live_item_tag__option_name[status_1]" id="status_1">
 			<?php $selected = (isset( $this->pc20live_item_tag__options['status_1'] ) && $this->pc20live_item_tag__options['status_1'] === 'pending') ? 'selected' : '' ; ?>
 			<option value="pending" <?php echo $selected; ?>>Pending</option>
-			<?php $selected = (isset( $this->pc20live_item_tag__options['status_1'] ) && $this->pc20live_item_tag__options['status_1'] === 'pc20live') ? 'selected' : '' ; ?>
-			<option value="pc20live" <?php echo $selected; ?>>pc20live</option>
+			<?php $selected = (isset( $this->pc20live_item_tag__options['status_1'] ) && $this->pc20live_item_tag__options['status_1'] === 'live') ? 'selected' : '' ; ?>
+			<option value="live" <?php echo $selected; ?>>Live</option>
 			<?php $selected = (isset( $this->pc20live_item_tag__options['status_1'] ) && $this->pc20live_item_tag__options['status_1'] === 'ended') ? 'selected' : '' ; ?>
 			<option value="ended" <?php echo $selected; ?>>Ended</option>
 		</select> <?php
@@ -1434,6 +1434,7 @@ class pc20liveItemTag {
 			'<input class="regular-text" type="text" name="pc20live_item_tag__option_name[startdate_2]" id="startdate_2" value="%s">',
 			isset( $this->pc20live_item_tag__options['startdate_2'] ) ? esc_attr( $this->pc20live_item_tag__options['startdate_2']) : ''
 		);
+		?> <br><b>The date and time the live item should start in the format 2022-10-09T20:30:00-04:00</b></br><?PHP
 	}
 
 	public function enddate_3_callback() {
@@ -1441,6 +1442,7 @@ class pc20liveItemTag {
 			'<input class="regular-text" type="text" name="pc20live_item_tag__option_name[enddate_3]" id="enddate_3" value="%s">',
 			isset( $this->pc20live_item_tag__options['enddate_3'] ) ? esc_attr( $this->pc20live_item_tag__options['enddate_3']) : ''
 		);
+		?> <br><b>The date and time the live item should end in the format 2022-10-09T21:30:00-04:00</b></br><?PHP
 	}
 
 	public function title_4_callback() {
@@ -1463,7 +1465,7 @@ class pc20liveItemTag {
 			isset( $this->pc20live_item_tag__options['guid_6'] ) ? esc_attr( $this->pc20live_item_tag__options['guid_6']) : ''
 		);
 ?> <input type="checkbox" id="generate_Lit_UUID" name="generate_Lit_UUID"> <label for="generate_Lit_UUID">Click the checkbox to generate a GUID</label><br>
-<?php
+ <b>Each episode should have a new GUID.</b></br><?PHP
 		
 	}
 
@@ -1472,6 +1474,7 @@ class pc20liveItemTag {
 			'<input class="regular-text" type="text" name="pc20live_item_tag__option_name[enclousure_7]" id="enclousure_7" value="%s">',
 			isset( $this->pc20live_item_tag__options['enclousure_7'] ) ? esc_attr( $this->pc20live_item_tag__options['enclousure_7']) : ''
 		);
+		?> <br><b>This is the link to your streaming episode. If using something like Icecast2 this should be the link to the stream.</b></br><?PHP
 	}
 
 	public function contentlink_8_callback() {
@@ -1479,6 +1482,7 @@ class pc20liveItemTag {
 			'<input class="regular-text" type="text" name="pc20live_item_tag__option_name[contentlink_8]" id="contentlink_8" value="%s">',
 			isset( $this->pc20live_item_tag__options['contentlink_8'] ) ? esc_attr( $this->pc20live_item_tag__options['contentlink_8']) : ''
 		);
+		?> <br><b>This should be a fallback URL if the podcast app can't stream your episode. It could be a link to a YouTube live link.</b></br><?PHP
 	}
 
 	public function link_9_callback() {
@@ -1486,6 +1490,7 @@ class pc20liveItemTag {
 			'<input class="regular-text" type="text" name="pc20live_item_tag__option_name[link_9]" id="link_9" value="%s">',
 			isset( $this->pc20live_item_tag__options['link_9'] ) ? esc_attr( $this->pc20live_item_tag__options['link_9']) : ''
 		);
+		?> <br><b>This is A URL to an episode page or show notes for the episode (Just like a normal episode link url).</b></br><?PHP
 	}
 	
 	public function image_10_callback() {
@@ -1493,6 +1498,7 @@ class pc20liveItemTag {
 			'<input class="regular-text" type="text" name="pc20live_item_tag__option_name[image_10]" id="image_10" value="%s">',
 			isset( $this->pc20live_item_tag__options['image_10'] ) ? esc_attr( $this->pc20live_item_tag__options['image_10']) : ''
 		);
+		?> <br><b>This is the link to a URL that has your episode artwork.</b></br><?PHP
 	}
 
 	
