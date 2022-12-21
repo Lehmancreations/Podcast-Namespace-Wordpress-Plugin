@@ -1434,7 +1434,6 @@ class pc20liveItemTag {
 			'<input class="regular-text" type="datetime-local" name="pc20live_item_tag__option_name[startdate_2]" id="startdate_2" value="%s">',
 			isset( $this->pc20live_item_tag__options['startdate_2'] ) ? esc_attr( $this->pc20live_item_tag__options['startdate_2']) : ''
 		);
-		?> <br><b>The date and time the live item should start in the format 2022-10-09T20:30:00-04:00</b></br><?PHP
 	}
 
 	public function enddate_3_callback() {
@@ -1442,7 +1441,6 @@ class pc20liveItemTag {
 			'<input class="regular-text" type="datetime-local" name="pc20live_item_tag__option_name[enddate_3]" id="enddate_3" value="%s">',
 			isset( $this->pc20live_item_tag__options['enddate_3'] ) ? esc_attr( $this->pc20live_item_tag__options['enddate_3']) : ''
 		);
-		?> <br><b>The date and time the live item should end in the format 2022-10-09T21:30:00-04:00</b></br><?PHP
 	}
 
 	public function title_4_callback() {
