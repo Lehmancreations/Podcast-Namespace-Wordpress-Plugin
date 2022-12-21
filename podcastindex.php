@@ -4,7 +4,7 @@
 Plugin Name: Podcast Namespace
 Plugin URI: https://github.com/Lehmancreations/Podcast-Namespace-Wordpress-Plugin
 Description: A plugin to add the podcasting 2.0 namespace to your Powerpress feeds
-Version: 1.7.2
+Version: 1.7.3
 Author: Lehmancreations
 Author URI: https://lehmancreations.com
 Requires at least: 3.6
@@ -456,7 +456,7 @@ function podastindex_rss2_head()
 	
 	
 	
-		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.7.2 -->".PHP_EOL;	
+		echo "<!-- Podcast Namespace Tags Added by LehmanCreations V1.7.3 -->".PHP_EOL;	
 	
 	    if (!empty ( $podcast_namespace_options['locked_owner_1'] )) {
 			echo "\t".'<podcast:locked owner="' . $podcast_namespace_options['locked_owner_1'] .'">' . $podcast_namespace_options['locked_0'] . '</podcast:locked>'.PHP_EOL; }
@@ -945,7 +945,7 @@ function podcast_season_callback( $post ) {
 <table>
 	<th>Podcast Season</th>
 	<tr><td><label for="">Season Number</label></td>
-	<td>	<input type="number" name="season_number_field" placeholder="Season Number" value="<?php echo $podcast_season[0]['season_number']; ?>"></td></tr>
+	<td>	<input type="number" name="season_number_field" min="0" placeholder="Season Number" value="<?php echo $podcast_season[0]['season_number']; ?>"></td></tr>
    <tr> <td><label for="">Season Name (optional)</label></td>
   <td>  <input type="text" name="season_name_field" placeholder="Enter Season Name" value="<?php echo $podcast_season[0]['season_name']; ?>"></td></tr>
 <!-- </table>
@@ -954,7 +954,7 @@ function podcast_season_callback( $post ) {
 <table> -->
 	<th>Podcast Episode</th>
 	<tr><td><label for="">Episode Number</label></td>
-	<td>	<input type="number" name="episode_number_field" placeholder="Episode Number" value="<?php echo $podcast_season[0]['episode_number']; ?>"></td></tr>
+	<td>	<input type="number" name="episode_number_field" min="0" placeholder="Episode Number" value="<?php echo $podcast_season[0]['episode_number']; ?>"></td></tr>
    <tr> <td><label for="">Episode Name (optional)</label></td>
   <td>  <input type="text" name="episode_name_field" placeholder="Enter Season Name" value="<?php echo $podcast_season[0]['episode_name']; ?>"></td></tr>
 </table>
@@ -1014,11 +1014,10 @@ function podcastindex_rss2_season( $content ) {
     global $post;
     $podcast_season = get_post_meta($post->ID, '_podcast_season_key',false); // get the value 
 
-    // add soundbite only if the Custom Field is set
-  if ( $podcast_season ) {
+    // add season only if the Custom Field is set
+  if ( !empty($podcast_season[0]['season_number'])) {
 
 		if ($podcast_season[0]['season_name'] =="") {
-			
 		echo "\t".'<podcast:season>' . $podcast_season[0]['season_number'] . '</podcast:season>'.PHP_EOL;
 		} else {
 		echo "\t".'<podcast:season name="' . $podcast_season[0]['season_name'] . '">' . $podcast_season[0]['season_number'] . '</podcast:season>'.PHP_EOL;	
@@ -1041,8 +1040,8 @@ function podcastindex_rss2_episode( $content ) {
     global $post;
     $podcast_season = get_post_meta($post->ID, '_podcast_season_key',false); // get the value 
 
-    // add soundbite only if the Custom Field is set
-  if ( $podcast_season ) {
+    // add episode only if the Custom Field is set
+  if ( !empty($podcast_season[0]['episode_number'])) {
 
 		if ($podcast_season[0]['episode_name'] =="") {
 			
@@ -1432,7 +1431,7 @@ class pc20liveItemTag {
 
 	public function startdate_2_callback() {
 		printf(
-			'<input class="regular-text" type="text" name="pc20live_item_tag__option_name[startdate_2]" id="startdate_2" value="%s">',
+			'<input class="regular-text" type="datetime-local" name="pc20live_item_tag__option_name[startdate_2]" id="startdate_2" value="%s">',
 			isset( $this->pc20live_item_tag__options['startdate_2'] ) ? esc_attr( $this->pc20live_item_tag__options['startdate_2']) : ''
 		);
 		?> <br><b>The date and time the live item should start in the format 2022-10-09T20:30:00-04:00</b></br><?PHP
@@ -1440,7 +1439,7 @@ class pc20liveItemTag {
 
 	public function enddate_3_callback() {
 		printf(
-			'<input class="regular-text" type="text" name="pc20live_item_tag__option_name[enddate_3]" id="enddate_3" value="%s">',
+			'<input class="regular-text" type="datetime-local" name="pc20live_item_tag__option_name[enddate_3]" id="enddate_3" value="%s">',
 			isset( $this->pc20live_item_tag__options['enddate_3'] ) ? esc_attr( $this->pc20live_item_tag__options['enddate_3']) : ''
 		);
 		?> <br><b>The date and time the live item should end in the format 2022-10-09T21:30:00-04:00</b></br><?PHP
@@ -1546,11 +1545,17 @@ function PC20LIT_rss2_head() {
 		// status (required) A string that must be one of pending, pc20live or ended.
 		// Get a GUID https://www.uuidgenerator.net/api/guid
 
-		echo '<podcast:liveItem status="'. $status_1 .'" start="'.$startdate_2.'" end="'.$enddate_3.'">
+			//Get timezone
+			$timezone = wp_timezone_string();
+			$time = new \DateTime('now', new DateTimeZone($timezone));
+$timezoneOffset = $time->format('P');
+			
+			
+		echo '<podcast:liveItem status="'. $status_1 .'" start="'.$startdate_2 .':00' .$timezoneOffset . '" end="'.$enddate_3. ':00' . $timezoneOffset .'">
 		<title>'.$title_4.'</title>
 		 <description><![CDATA['.$description_5.']]>
 		 </description>
-		<guid>'.$guid_6.'</guid>
+		<guid isPermaLink="false">'.$guid_6.'</guid>
 		<enclosure url="'.$enclousure_7.'" type="audio/mpeg" length="312" />
 		<podcast:contentLink href="'.$contentlink_8.'">Listen pc20live!</podcast:contentLink>
 		<link>'.$link_9.'</link>';
